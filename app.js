@@ -6,7 +6,8 @@ const bodyParser = require("body-parser");
 
 
 //importing the routes
-const adminData = require("./routes/admin");
+const errorController = require("./controllers/error");
+const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 
 const PORT = process.env.PORT || 5000; // So we can run on heroku || (OR) localhost:5000
@@ -21,16 +22,11 @@ app.use(express.static(path.join(__dirname, "public"))); //this allows us to acc
 
 //This will use the middlewares inside the files in the routes folder,
 //this is cool because this file doesn't get that crowded.
-app.use("/admin", adminData.routes); //the first parameter is the location in the URL
+app.use("/admin", adminRoutes); //the first parameter is the location in the URL
 app.use(shopRoutes);
 
 //404 page | As I'm using app.use everything gets here if there's no match before
-app.use((req, res, next) => {
-  res.status(404).render("404", { 
-    pageTitle: "Page Not Found", 
-    path: "",
-  });
-})
+app.use("", errorController.get404);
 
 
 //This listen function will create the http server, and listen for incoming connections)

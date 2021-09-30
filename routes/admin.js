@@ -3,30 +3,16 @@ const path = require("path");
 const rootDir = require("../util/path"); 
 const router = express.Router();
 
-const products = [];
+//Controller's imports
+const adminController = require("../controllers/admin");
+
 
 // /admin/add-product => GET (this gets added in app.js)
-router.get("/add-product", (req, res, next)=> {
-  res.render('add-product', {
-    pageTitle: 'Add Product', 
-    path: '/admin/add-product', 
-    formsCSS: true, 
-    productCSS: true, 
-    activeAddProduct: true});
-});
+router.get("/add-product", adminController.getAddProduct);
 
 
 // /admin/add-product => POST
-router.post("/add-product", (req, res, next)=> {
-  products.push({
-    title: req.body.title,
-    author: req.body.author,
-    price: req.body.price, 
-    summary: req.body.summary,
-    imageUrl: req.body.imageUrl
-  });
-  res.redirect('/');
-})
+router.post("/add-product", adminController.postAddProduct);
 
 // /admin/delete-product => POST
 router.post("/delete-product", (req, res, next) => {
@@ -35,8 +21,12 @@ router.post("/delete-product", (req, res, next) => {
   res.redirect("/");
 })
 
+// /admin/products => GET
+router.get("/products", adminController.getAdminProducts);
+
+
 // when I want to import this elements I have to look for them in adminData.routes,
 // and adminData.products
-exports.routes = router;
-exports.products = products;
+module.exports = router;
+
 
