@@ -24,6 +24,10 @@ router.post("/delete-product", (req, res, next) => {
 // /admin/products => GET
 router.get("/products", adminController.getAdminProducts);
 
+router.get("/edit-product/:productId", adminController.getEditProduct);
+
+router.post("/edit-product", adminController.postEditProduct);
+
 
 // when I want to import this elements I have to look for them in adminData.routes,
 // and adminData.products

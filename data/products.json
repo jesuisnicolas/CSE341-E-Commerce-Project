@@ -1,9 +1,1 @@
-[
-  {
-    "title": "El Principito",
-    "author": "Arthur Conan Doyle",
-    "price": "15.66",
-    "summary": "A book about things",
-    "imgUrl": "http://d1w7fb2mkkr3kw.cloudfront.net/assets/images/book/large/9780/1560/9780156013925.jpg"
-  }
-]
+[{"id":"0.12564854","title":"El Principito","author":"Antoine de Saint-Exupery","price":"15.66","description":"The story of a pilot an a kid from outer space.","imgUrl":"http://d1w7fb2mkkr3kw.cloudfront.net/assets/images/book/large/9780/1560/9780156013925.jpg"},{"id":"0.9414783294408371","title":"De la Tierra a la Luna","author":"Jules Verne","price":"15.50","description":"Un libro de un cohete a la luna!!!!","imgUrl":"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.msttdnBGAuHXj_gPeeiksAHaKA%26pid%3DApi&f=1"}]

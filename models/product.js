@@ -20,39 +20,46 @@ const getProductFromFile = (cb) => {
 }
 
 module.exports = class Product {
-  constructor(title, author, price, summary, img) {
+  constructor(id, title, author, price, description, img) {
+    this.id = id;
     this.title = title;
     this.author = author;
     this.price = price;
-    this.summary = summary;
+    this.description = description;
     this.imgUrl = img;
   }
 
-  save() {
+  save(){
     getProductFromFile(products => {
-      products.push(this); 
-      fs.writeFile(p, JSON.stringify(products), err => {
-        console.log(err);
-      });
+        if (this.id) {
+            const existingProductIndex = products.findIndex(prod => prod.id === this.id);
+            const updatedProducts = [...products];
+            updatedProducts[existingProductIndex] = this;
+            fs.writeFile(p, JSON.stringify(updatedProducts), (err) =>{
+                console.log(err);
+            });
+        } else {
+            this.id = Math.random().toString(); //this creates a dummy unique ID for each product
+            products.push(this);
+            fs.writeFile(p, JSON.stringify(products), (err) =>{
+            console.log(err);
+        });
+        }
+        
     });
-  }
+}
   /* the static keyword makes sure I can call this method from
   the class itself, without having to instantiate the object.
   I'm using a callback here because this is asynchronous code.
   If I don't have a callback, I will get an error. */
   static fetchAll(cb) {
     getProductFromFile(cb);
-  //   const p = path.join(path.dirname(require.main.filename),
-  //    "data", 
-  //    "products.json");
-
-  //   fs.readFile(p, (err, fileContent) => {
-  //     if(err) {
-  //       // return [];
-  //       cb([]);
-  //     }
-  //     // return JSON.parse(fileContent);
-  //     cb(JSON.parse(fileContent));
-  //   });
   }   
-}
+
+  static findById(id, cb) {
+    getProductFromFile(products => {
+      const product = products.find(p => p.id === id);
+      cb(product);
+    });
+  }
+};
