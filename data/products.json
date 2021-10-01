@@ -1,10 +1,26 @@
 [
   {
-    "id": "0.9414783294408371",
-    "title": "De la Tierra a la Luna",
-    "author": "Jules Verne",
-    "price": "15.50",
-    "description": "Un libro de un cohete a la luna!!!!",
-    "imgUrl": "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.msttdnBGAuHXj_gPeeiksAHaKA%26pid%3DApi&f=1"
+    "id": "0.4706297454126456",
+    "title": "In Search of Lost Time",
+    "author": "Marcel Proust",
+    "price": "15.35",
+    "description": "Swann's Way, the first part of A la recherche de temps perdu, Marcel Proust's seven-part cycle, was published in 1913. In it, Proust introduces the themes that run through the entire work.",
+    "imgUrl": "https://d3i5mgdwi2ze58.cloudfront.net/7hqv6ddaqv363p4hadx6lymotow1"
+  },
+  {
+    "id": "0.9708793958733941",
+    "title": "Ulysses",
+    "author": "James Joyce",
+    "price": "17.99",
+    "description": "Ulysses chronicles the passage of Leopold Bloom through Dublin during an ordinary day, June 16, 1904. The title parallels and alludes to Odysseus (Latinised into Ulysses), the hero of Homer's Odyss...",
+    "imgUrl": "https://d3i5mgdwi2ze58.cloudfront.net/f7nkbyqfsnrrlct3hs01jkrz2vdi"
+  },
+  {
+    "id": "0.12305534887791825",
+    "title": "Don Quixote",
+    "author": "Miguel de Cervantes",
+    "price": "12.66",
+    "description": "Alonso Quixano, a retired country gentleman in his fifties, lives in an unnamed section of La Mancha with his niece and a housekeeper. He has become obsessed with books of chivalry, and believes th...",
+    "imgUrl": "https://d3i5mgdwi2ze58.cloudfront.net/kedoaww5u33ka020nxmaxqscpgiz"
   }
-]
+] 

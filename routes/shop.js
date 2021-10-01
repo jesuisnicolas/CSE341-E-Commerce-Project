@@ -5,7 +5,7 @@ const shopController = require("../controllers/shop");
 
 
 router.get("/", shopController.getIndex);
-
+ 
 router.get("/products", shopController.getProducts);
 
 // GET route to extract the ID of the product and show the Details
@@ -14,6 +14,8 @@ router.get("/products/:productId", shopController.getProduct);
 router.get("/cart", shopController.getCart);
 
 router.post("/cart", shopController.postCart);
+
+router.post("/cart-delete-item", shopController.postCartDeleteProduct);
 
 router.get("/checkout", shopController.getCheckout);
 
