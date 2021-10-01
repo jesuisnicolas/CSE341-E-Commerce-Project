@@ -56,6 +56,12 @@ exports.postEditProduct = (req, res, next) => {
   res.redirect('/admin/products');
 };
 
+exports.postDeleteProduct = (req, res, next) => {
+  const prodId = req.body.productId;
+  Product.deleteById(prodId);
+  res.redirect('/admin/products');
+};
+
 // This GET returns the page with the ADMIN products.
 exports.getAdminProducts = (req, res, next) => {
   Product.fetchAll((products => {

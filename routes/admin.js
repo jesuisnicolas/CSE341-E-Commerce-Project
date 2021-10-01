@@ -15,11 +15,8 @@ router.get("/add-product", adminController.getAddProduct);
 router.post("/add-product", adminController.postAddProduct);
 
 // /admin/delete-product => POST
-router.post("/delete-product", (req, res, next) => {
-  //this line modifies the original array. USE WITH CAUTION
-  products.splice(req.body.productIndex, 1);
-  res.redirect("/");
-})
+router.post("/delete-product", adminController.postDeleteProduct);
+
 
 // /admin/products => GET
 router.get("/products", adminController.getAdminProducts);
@@ -27,6 +24,8 @@ router.get("/products", adminController.getAdminProducts);
 router.get("/edit-product/:productId", adminController.getEditProduct);
 
 router.post("/edit-product", adminController.postEditProduct);
+
+router.post("/delete-product", adminController.postDeleteProduct);
 
 
 // when I want to import this elements I have to look for them in adminData.routes,

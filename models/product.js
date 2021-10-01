@@ -4,6 +4,8 @@ This file creates a Product class that represents a single product.
 const fs = require('fs');
 const path = require('path');
 
+const cart = require('./Cart');
+
 const p = path.join(path.dirname(require.main.filename),
      "data", 
      "products.json");
@@ -47,7 +49,25 @@ module.exports = class Product {
         }
         
     });
+  }
+
+  static deleteById(id) {
+    getProductFromFile(products => {
+        const product = products.find(prod => prod.id === id);
+        const updatedProducts = products.filter(prod => prod.id !== id);
+        fs.writeFile(p, JSON.stringify(updatedProducts), err => {
+            if(!err) {
+                Cart.deleteProduct(id, product.price);
+            }
+        });
+    });
+
 }
+
+
+
+
+
   /* the static keyword makes sure I can call this method from
   the class itself, without having to instantiate the object.
   I'm using a callback here because this is asynchronous code.
@@ -62,4 +82,6 @@ module.exports = class Product {
       cb(product);
     });
   }
+
+
 };
