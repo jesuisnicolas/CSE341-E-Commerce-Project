@@ -4,7 +4,7 @@ This file creates a Product class that represents a single product.
 const fs = require('fs');
 const path = require('path');
 
-const cart = require('./Cart');
+const cart = require('./cart');
 
 const p = path.join(path.dirname(require.main.filename),
      "data", 
