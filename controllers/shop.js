@@ -6,32 +6,41 @@ exports.getProducts = (req, res, next)=> {
   /* Calling the static methos without having to instantiate the class.
   Here I have to use a callback function to retrieve the data 
   because the fetchAll methos is asynchronous (using JSON) */
-  Product.fetchAll((products => {
-    res.render('shop/product-list', {prods: products, 
-                        pageTitle: 'Shop', 
-                        path: '/products' 
+  Product.fetchAll()
+    .then(products => {
+      res.render('shop/product-list', {prods: products, 
+                                       pageTitle: 'Shop', 
+                                       path: '/products' 
+      }); 
+    })
+    .catch(err => {
+      console.log(err);
     }); 
-  })); 
 };
 
 exports.getProduct = (req, res, next)=> {
   const prodId = req.params.productId;
 
-  Product.findById(prodId, product => {
-    res.render('shop/product-detail', { product: product,
-                                        pageTitle: product.title,
-                                        path: "/product"}); 
+  Product.findById(prodId)
+    .then( product => {
+      res.render('shop/product-detail', { product: product,
+                                          pageTitle: product.title,
+                                          path: "/product"}); 
   });
 }
 
 exports.getIndex = (req, res, next) => {
-  Product.fetchAll((products => {
-    res.render('shop/index', {prods: products, 
-                        pageTitle: 'Shop', 
-                        path: '/', 
-                        }
-    ); 
-  }));
+  Product.fetchAll()
+    .then(products => {
+      res.render('shop/index', 
+      { prods: products, 
+        pageTitle: 'Shop', 
+        path: '/' 
+      }); 
+    })
+    .catch(err => {
+      console.log(err);
+    });
 }
 
 exports.getCart = (req, res, next) => {

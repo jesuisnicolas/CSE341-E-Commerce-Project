@@ -3,7 +3,8 @@ const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
 
-
+// this is the function that connects to the db
+const mongoConnect = require("./util/database").mongoConnect;
 
 //importing the routes
 const errorController = require("./controllers/error");
@@ -29,5 +30,7 @@ app.use(shopRoutes);
 app.use("", errorController.get404);
 
 
-//This listen function will create the http server, and listen for incoming connections)
-app.listen(PORT, () => console.log(`Listening on ${PORT}`));
+mongoConnect(() => {
+  //This listen function will create the http server, and listen for incoming connections)
+  app.listen(PORT, () => console.log(`Listening on ${PORT}`));
+});
