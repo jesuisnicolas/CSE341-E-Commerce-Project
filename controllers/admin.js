@@ -12,13 +12,14 @@ exports.getAddProduct = (req, res, next)=> {
 
 // This is the POST to Add a Product
 exports.postAddProduct = (req, res, next) => {
-  const product = new Product(
-    req.body.title,
-    req.body.author,
-    req.body.price, 
-    req.body.description,
-    req.body.imgUrl
-  );
+  const product = new Product({
+    title: req.body.title,
+    author: req.body.author,
+    description: req.body.description,
+    price: req.body.price,
+    imgUrl: req.body.imgUrl,
+    userId: req.user._id
+  });
   product
     .save()
     .then(result => {
@@ -58,20 +59,38 @@ exports.postEditProduct = (req, res, next) => {
   const updatedPrice = req.body.price;
   const updatedDescription = req.body.description;
 
-   const updatedProduct = new Product( updatedTitle, updatedAuthor, updatedPrice,  updatedDescription, updatedImg, prodId);
-  updatedProduct.save().then(result => {console.log("Product updated")}).catch(err => {console.log(err)});
-  res.redirect('/admin/products');
+  Product.findById(prodId)
+    .then(p => {
+      p.title = updatedTitle;
+      p.author = updatedAuthor;
+      p.imgUrl = updatedImg;
+      p.price = updatedPrice;
+      p.description = updatedDescription;
+      return p.save();
+    })
+    .then(result => {
+      console.log("Updated product");
+      res.redirect("/admin/products");
+    })
+    .catch(err => {
+      console.error(err);
+    })
 };
 
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
-  Product.deleteById(prodId);
-  res.redirect('/admin/products');
+  Product.findByIdAndRemove(prodId)
+    .then(result => {
+      console.log("Product Deleted");
+      res.redirect('/admin/products');
+    })
 };
 
 // This GET returns the page with the ADMIN products.
 exports.getAdminProducts = (req, res, next) => {
-  Product.fetchAll()
+  Product.find()
+    // .select("title price -_id") //this is a SELECT for the query
+    // .populate("userId") //this will retrieve all the information (JOIN)
     .then(products => {
       res.render('admin/products', 
       { prods: products, 

@@ -12,7 +12,7 @@
             <div>
               <img src="<%= product.imgUrl %>" alt="Product Image">
             </div>
-            <h2><%= product.price %></h2>
+            <h2><%= product.price.toFixed(2) %></h2>
             <p><%= product.description %></p>
              
             <%- include('../includes/addToCart.ejs') %>
