@@ -7,6 +7,9 @@ const mongoose = require("mongoose");
 
 const session = require("express-session");
 const mongoDBStore = require("connect-mongodb-session")(session);
+const csrf = require("csurf");
+const flash = require("connect-flash");
+
 
 const PORT = process.env.PORT || 5000; // So we can run on heroku || (OR) localhost:5000
 
@@ -27,6 +30,7 @@ const store = new mongoDBStore({
   collection: "sessions"
 });
 
+const csrfProtection = csrf();
 
 app.set("view engine", "ejs");
 app.set("views", "views");
@@ -46,6 +50,10 @@ app.use(
    })
 );
 
+
+app.use(csrfProtection);
+app.use(flash());
+
 app.use((req, res, next) => {
   if(!req.session.user) {
     return next();
@@ -58,7 +66,19 @@ app.use((req, res, next) => {
     .catch(err => {
       console.log(err)
     });     
-})
+});
+
+/*This middleware will pass these variables to all the requests*/
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isLoggedIn;
+  res.locals.csrfToken = req.csrfToken();
+  // if(req.user.name){
+  //   res.locals.userName = req.user.name;
+  // } else {
+  //   res.locals.userName = "";
+  // }
+  next();
+});
 
 
 //This will use the middlewares inside the files in the routes folder,
@@ -80,15 +100,5 @@ app.use("", errorController.get404);
 
 mongoose.connect(MONGODB_URI)
   .then(result => {
-    User.findOne().then(user => {
-      if(!user) {
-        const user = new User({
-          username: "Nicolas",
-          email: "nicolas@email.com",
-          cart: {items: [] }
-        })
-        user.save();
-      }
-    })
     app.listen(PORT, () => console.log(`Listening on ${PORT}`));
   });
