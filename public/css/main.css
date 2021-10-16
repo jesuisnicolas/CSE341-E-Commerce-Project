@@ -30,8 +30,10 @@ form {
 
 .main-header__nav {
   height: 100%;
-  display: none;
+  width: 100%;
+  display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 
 .main-header__item-list {
@@ -46,9 +48,16 @@ form {
   padding: 0;
 }
 
-.main-header__item a {
+.main-header__item a,
+.main-header__item p,
+.main-header__item button {
+  font: inherit;
+  background: transparent;
+  border: none;
   text-decoration: none;
   color: white;
+  cursor: pointer;
+  margin: auto;
 }
 
 .main-header__item a:hover,
@@ -199,6 +208,21 @@ form {
   text-align:center;
 }
 
+.user-message {
+  margin: auto;
+  width: 90%;
+  padding: 1rem;
+  text-align: center;
+  border-radius: 5px;
+  border: 1px solid rgb(9, 151, 104);
+  background:rgb(161, 216, 198)
+}
+
+.user-message--error {
+  border: 1px solid rgb(151, 9, 9);
+  background:rgb(253, 157, 157)
+}
+
 @media (min-width: 768px) {
   .main-header__nav {
     display: flex;
@@ -206,5 +230,9 @@ form {
 
   #side-menu-toggle {
     display: none;
+  }
+
+  .user-message {
+    width: 30rem;
   }
 }
