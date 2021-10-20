@@ -1,7 +1,11 @@
+require('dotenv').config()
 const fs = require("fs");
 const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
+
+// const env = require('dotenv');
+// env.config();
 
 const mongoose = require("mongoose");
 
@@ -22,7 +26,7 @@ const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const authRoutes =require("./routes/auth");
 
-MONGODB_URI = "mongodb+srv://nicoscha:B9qFzXihHAoU6Rzz@cluster0.j1eeq.mongodb.net/shop";
+MONGODB_URI = process.env.MONGODB_URI
 
 const app = express(); //all the logic of express is in this variable
 const store = new mongoDBStore({
