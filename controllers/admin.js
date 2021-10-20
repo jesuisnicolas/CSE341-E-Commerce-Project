@@ -63,16 +63,19 @@ exports.postEditProduct = (req, res, next) => {
 
   Product.findById(prodId)
     .then(p => {
+      if(p.userId.toString() !== req.user._id.toString()) {
+        return res.redirect("/");
+      }
       p.title = updatedTitle;
       p.author = updatedAuthor;
       p.imgUrl = updatedImg;
       p.price = updatedPrice;
       p.description = updatedDescription;
-      return p.save();
-    })
-    .then(result => {
-      console.log("Updated product");
-      res.redirect("/admin/products");
+      return p.save()
+        .then(result => {
+          console.log("Updated product");
+          res.redirect("/admin/products");
+        })
     })
     .catch(err => {
       console.error(err);
@@ -81,7 +84,7 @@ exports.postEditProduct = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
-  Product.findByIdAndRemove(prodId)
+  Product.deleteOne({ _id: prodId, userId: req.user._id })
     .then(result => {
       console.log("Product Deleted");
       res.redirect('/admin/products');
@@ -90,7 +93,7 @@ exports.postDeleteProduct = (req, res, next) => {
 
 // This GET returns the page with the ADMIN products.
 exports.getAdminProducts = (req, res, next) => {
-  Product.find()
+  Product.find({ userId: req.user._id })
     // .select("title price -_id") //this is a SELECT for the query
     // .populate("userId") //this will retrieve all the information (JOIN)
     .then(products => {
