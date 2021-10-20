@@ -52,7 +52,7 @@ app.use("", errorController.get404);
 // });
 
 
-mongoose.connect("mongodb+srv://nicoscha:B9qFzXihHAoU6Rzz@cluster0.j1eeq.mongodb.net/shop?retryWrites=true&w=majority")
+mongoose.connect(process.env.MONGODB_URI)
   .then(result => {
     User.findOne().then(user => {
       if(!user) {
