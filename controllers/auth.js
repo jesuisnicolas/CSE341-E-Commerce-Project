@@ -82,7 +82,9 @@ exports.getNewPassword = (req, res, next) => {
       });
     })
     .catch(err => {
-      console.log(err);
+      const error = new Error("Error retrieving data.");
+      error.httpStatusCode = 500;
+      return next(error); //this will let express know that is has to use the error middleware
     });
 };
 
@@ -134,7 +136,9 @@ exports.postSignup = (req, res, next) => {
         });
       })     
       .catch(err => {
-        console.log(err)
+        const error = new Error("Error retrieving data.");
+        error.httpStatusCode = 500;
+        return next(error); //this will let express know that is has to use the error middleware
       });
 };
 
@@ -253,6 +257,8 @@ exports.postNewPassword = (req, res, next) => {
       res.redirect('/login');
     })
     .catch(err => {
-      console.log(err);
+      const error = new Error("Error retrieving data.");
+      error.httpStatusCode = 500;
+      return next(error); //this will let express know that is has to use the error middleware
     });
 };

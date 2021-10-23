@@ -31,6 +31,11 @@ exports.getProduct = (req, res, next) => {
         path: "/product",
         isAuthenticated: req.session.isLoggedIn
       });
+    })
+    .catch(err => {
+      const error = new Error("Error retrieving data.");
+      error.httpStatusCode = 500;
+      return next(error); //this will let express know that is has to use the error middleware
     });
 }
 
@@ -44,7 +49,9 @@ exports.getIndex = (req, res, next) => {
       });
     })
     .catch(err => {
-      console.log(err);
+      const error = new Error("Error retrieving data.");
+      error.httpStatusCode = 500;
+      return next(error); //this will let express know that is has to use the error middleware
     });
 }
 
@@ -73,7 +80,9 @@ exports.postCart = (req, res, next) => {
       res.redirect("/cart");
     })
     .catch(err => {
-      console.log(err);
+      const error = new Error("Error retrieving data.");
+      error.httpStatusCode = 500;
+      return next(error); //this will let express know that is has to use the error middleware
     });
 
 };
@@ -85,7 +94,9 @@ exports.postCartDeleteProduct = (req, res, next) => {
       res.redirect('/cart');
     })
     .catch(err => {
-      console.log(err);
+      const error = new Error("Error retrieving data.");
+      error.httpStatusCode = 500;
+      return next(error); //this will let express know that is has to use the error middleware
     });
 };
 
@@ -125,9 +136,10 @@ exports.postOrder = (req, res, next) => {
       res.redirect("/orders");
     })
     .catch(err => {
-        console.log(err);
-      }
-    )
+      const error = new Error("Error retrieving data.");
+      error.httpStatusCode = 500;
+      return next(error); //this will let express know that is has to use the error middleware
+    });
 }
 
 exports.getCheckout = (req, res, next) => {

@@ -36,8 +36,13 @@ exports.getEditProduct = (req, res, next)=> {
       errorMessage: null,
       validationErrors: [],
       isAuthenticated: req.session.isLoggedIn
+      });
+    })
+    .catch(err => {
+      const error = new Error("Error retrieving data.");
+      error.httpStatusCode = 500;
+      return next(error); //this will let express know that is has to use the error middleware
     });
-  });
   
 };
 // This GET returns the page with the ADMIN products.
@@ -54,56 +59,16 @@ exports.getAdminProducts = (req, res, next) => {
       }); 
     })
     .catch(err => {
-      console.log(err);
+      const error = new Error("Error retrieving the data.");
+      error.httpStatusCode = 500;
+      return next(error); //this will let express know that is has to use the error middleware
     });
 }
 
 
-
-// This is the POST to Add a Product
-// exports.postAddProduct = (req, res, next) => {
-  
-//   const title =  req.body.title;
-//   const author =  req.body.author;
-//   const description =  req.body.description;
-//   const price = req.body.price;
-//   const imgUrl = req.body.imgUrl;
-//   const errors = validationResult(req);
-
-//   if(!errors.isEmpty()) {
-//     return res.status(422).render('admin/edit-product', {
-//       pageTitle: 'Add Product', 
-//       path: '/admin/add-product', 
-//       editing: false,
-//       hasError: true,
-//       product: {
-//         title: title,
-//         author: author,
-//         description: description,
-//         price: price,
-//         imgUrl: imgUrl
-//       },
-//       errorMessage: errors.array()[0].msg,
-//       isAuthenticated: req.session.isLoggedIn
-//     });
-//   }
-  
-
-//   const product = new Product({
-//     title: req.body.title,
-//     author: req.body.author,
-//     description: req.body.description,
-//     price: req.body.price,
-//     imgUrl: req.body.imgUrl,
-//     userId: req.user
-//   });
-//   product
-//     .save()
-//     .then(result => {
-//       console.log("Product Created");
-//       res.redirect("/products");
-//     }); 
-// };
+/**************
+* POST ROUTES *
+***************/
 
 exports.postAddProduct = (req, res, next) => {
   const title = req.body.title;
@@ -148,7 +113,9 @@ exports.postAddProduct = (req, res, next) => {
       res.redirect('/admin/products');
     })
     .catch(err => {
-      console.log(err);
+      const error = new Error("Adding this product failed.");
+      error.httpStatusCode = 500;
+      return next(error); //this will let express know that is has to use the error middleware
     });
 };
 
@@ -199,7 +166,9 @@ exports.postEditProduct = (req, res, next) => {
         })
     })
     .catch(err => {
-      console.error(err);
+      const error = new Error("Editing this product failed.");
+      error.httpStatusCode = 500;
+      return next(error); //this will let express know that is has to use the error middleware
     })
 };
 
@@ -209,6 +178,11 @@ exports.postDeleteProduct = (req, res, next) => {
     .then(result => {
       console.log("Product Deleted");
       res.redirect('/admin/products');
+    })
+    .catch(err => {
+      const error = new Error("Deleting this product failed.");
+      error.httpStatusCode = 500;
+      return next(error); //this will let express know that is has to use the error middleware
     })
 };
 

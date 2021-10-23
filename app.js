@@ -54,24 +54,6 @@ app.use(
    })
 );
 
-
-app.use(csrfProtection);
-app.use(flash());
-
-app.use((req, res, next) => {
-  if(!req.session.user) {
-    return next();
-  }
-  User.findById(req.session.user._id)
-    .then(user => {
-      req.user = user;
-      next();
-    })
-    .catch(err => {
-      console.log(err)
-    });     
-});
-
 /*This middleware will pass these variables to all the requests*/
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.session.isLoggedIn;
@@ -85,15 +67,48 @@ app.use((req, res, next) => {
 });
 
 
+app.use(csrfProtection);
+app.use(flash());
+
+app.use((req, res, next) => {
+  if(!req.session.user) {
+    return next();
+  }
+  User.findById(req.session.user._id)
+    .then(user => {
+      if(!user) {
+        return next();
+      }
+      req.user = user;
+      next();
+    })
+    .catch(err => {
+      next(new Error(err));
+    });     
+});
+
+
+
+
 //This will use the middlewares inside the files in the routes folder,
 //this is cool because this file doesn't get that crowded.
 app.use("/admin", adminRoutes); //the first parameter is the location in the URL
 app.use(shopRoutes);
 app.use(authRoutes);
 
+app.get("/500", errorController.get500);
 
 //404 page | As I'm using app.use everything gets here if there's no match before
 app.use("", errorController.get404);
+
+//This is a special kind of middleware to handle errors.
+app.use((error, req, res,next) => {
+  res.status(500).render("500", { 
+    pageTitle: "Server Error", 
+    path: "",
+    isAuthenticated: req.session.isLoggedIn
+  });
+});
 
 
 // mongoConnect(() => {
