@@ -55,6 +55,9 @@ app.use(
    })
 );
 
+app.use(csrfProtection);
+app.use(flash());
+
 /*This middleware will pass these variables to all the requests*/
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.session.isLoggedIn;
@@ -68,8 +71,7 @@ app.use((req, res, next) => {
 });
 
 
-app.use(csrfProtection);
-app.use(flash());
+
 
 app.use((req, res, next) => {
   if(!req.session.user) {
@@ -106,12 +108,12 @@ app.use("", errorController.get404);
 app.use((error, req, res,next) => {
   res.status(500).render("500", { 
     pageTitle: "Server Error", 
-    path: "",
+    path: "/500",
     isAuthenticated: req.session.isLoggedIn
   });
 });
 
-
+ 
 // mongoConnect(() => {
 //   //This listen function will create the http server, and listen for incoming connections)
 //   app.listen(PORT, () => console.log(`Listening on ${PORT}`));
