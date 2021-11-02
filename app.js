@@ -1,4 +1,11 @@
-require('dotenv').config()
+
+//this if will check if we are in production mode or not.
+//if we are in production mode, we will use the environment variables
+//if we are not in production mode, we will use the config file.
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
+
 const fs = require("fs");
 const path = require("path");
 const express = require("express");
@@ -13,6 +20,7 @@ const session = require("express-session");
 const mongoDBStore = require("connect-mongodb-session")(session);
 const csrf = require("csurf");
 const flash = require("connect-flash");
+const multer = require("multer");
 
 
 const PORT = process.env.PORT || 5000; // So we can run on heroku || (OR) localhost:5000
@@ -40,9 +48,41 @@ const csrfProtection = csrf();
 app.set("view engine", "ejs");
 app.set("views", "views");
 
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(express.static(path.join(__dirname, "public"))); //this allows us to access the static files
+/*
+The urlencoded middleware is used to parse the body of incoming requests
+and put the result in req.body
+*/
+app.use(express.urlencoded({extended: true}));
 
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "images");
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now().toString() + "-" + file.originalname);
+  },
+
+});
+
+/*The fileFilter function is used to filter out the files that are not images.*/
+const fileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === "image/png" ||
+    file.mimetype === "image/jpg" ||
+    file.mimetype === "image/jpeg"
+  ) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+
+/*The multer middleware is used to handle multipart/form-data requests.*/
+app.use(multer({ storage: fileStorage, fileFilter: fileFilter}).single('image')); //image is the name of the field in the form
+
+
+app.use(express.static(path.join(__dirname, "public"))); //this allows us to access the static files
+app.use("/images", express.static(path.join(__dirname, "images"))); //this allows us to access the static files
 
 /* this is the session middleware. It will automatically create
 a cookie for the session */
@@ -57,6 +97,7 @@ app.use(
 
 app.use(csrfProtection);
 app.use(flash());
+
 
 /*This middleware will pass these variables to all the requests*/
 app.use((req, res, next) => {

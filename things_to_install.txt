@@ -1,5 +1,6 @@
 sessions
 connect-mongodb-session
+multer
 
 
 mongodb uri: "mongodb+srv://nicoscha:B9qFzXihHAoU6Rzz@cluster0.j1eeq.mongodb.net/shop"

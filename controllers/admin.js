@@ -1,6 +1,7 @@
 const Product = require("../models/product");
 const mongodb = require("mongodb");
 const ObjectId = mongodb.ObjectId;
+const fileHelper = require('../util/file');
 const { validationResult } = require("express-validator");
 
 // This will GET the product page
@@ -73,10 +74,31 @@ exports.getAdminProducts = (req, res, next) => {
 exports.postAddProduct = (req, res, next) => {
   const title = req.body.title;
   const author = req.body.author;
-  const imgUrl = req.body.imgUrl;
+  const image = req.file; //this is the file that was uploaded
   const price = req.body.price;
   const description = req.body.description;
+
+  if(!image) {
+    return res.status(422).render('admin/edit-product', {
+      pageTitle: 'Add Product',
+      path: '/admin/add-product',
+      editing: false,
+      hasError: true,
+      product: {
+        title: title,
+        author: author,
+        price: price,
+        description: description
+      },
+      errorMessage: "Attached file is not an Image.",
+      validationErrors: []
+    });
+  }
+
+  const imgUrl = image.path;
+
   const errors = validationResult(req);
+
 
   if (!errors.isEmpty()) {
     console.log(errors.array());
@@ -88,7 +110,6 @@ exports.postAddProduct = (req, res, next) => {
       product: {
         title: title,
         author: author,
-        imgUrl: imgUrl,
         price: price,
         description: description
       },
@@ -102,7 +123,7 @@ exports.postAddProduct = (req, res, next) => {
     author: author,
     price: price,
     description: description,
-    imgUrl: imgUrl,
+    imgUrl: `/${imgUrl}`,
     userId: req.user
   });
   product
@@ -123,7 +144,7 @@ exports.postEditProduct = (req, res, next) => {
   const prodId = req.body.productId;
   const updatedTitle = req.body.title;
   const updatedAuthor = req.body.author;
-  const updatedImg = req.body.imgUrl;
+  const updatedImg = req.file;
   const updatedPrice = req.body.price;
   const updatedDescription = req.body.description;
 
@@ -139,7 +160,6 @@ exports.postEditProduct = (req, res, next) => {
       product: {
         title: updatedTitle,
         author: updatedAuthor,
-        imgUrl: updatedImg,
         price: updatedPrice,
         description: updatedDescription,
         _id: prodId
@@ -156,6 +176,12 @@ exports.postEditProduct = (req, res, next) => {
       }
       p.title = updatedTitle;
       p.author = updatedAuthor;
+      /*this checks if the user uploaded a new image*/
+      if(updatedImg) {
+        fileHelper.deleteFile(p.imgUrl);
+        p.imgUrl = `/${updatedImg.path}`;
+
+      }
       p.imgUrl = updatedImg;
       p.price = updatedPrice;
       p.description = updatedDescription;
@@ -174,16 +200,23 @@ exports.postEditProduct = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
-  Product.deleteOne({ _id: prodId, userId: req.user._id })
-    .then(result => {
-      console.log("Product Deleted");
-      res.redirect('/admin/products');
+  Product.findById(prodId)
+    .then(product => {
+      if(!product) {
+        return next(new Error("Product not found."));    
+      }
+      fileHelper.deleteFile(product.imgUrl);
+      return Product.deleteOne({ _id: prodId, userId: req.user._id });  
+    })
+    .then(() => {
+      console.log("Deleted product");
+      res.redirect("/admin/products");
     })
     .catch(err => {
-      const error = new Error("Deleting this product failed.");
+      const error = new Error(err);
       error.httpStatusCode = 500;
-      return next(error); //this will let express know that is has to use the error middleware
-    })
+      return next(error); 
+    });
 };
 
 
