@@ -5,18 +5,35 @@ const path = require("path");
 
 const PDFDocument = require("pdfkit");
 
+const ITEMS_PER_PAGE = 1;
+
 // This GET returns the page with the products
 exports.getProducts = (req, res, next) => {
   /* Calling the static methos without having to instantiate the class.
   Here I have to use a callback function to retrieve the data 
   because the fetchAll methos is asynchronous (using JSON) */
-  Product.find()
+  const page = +req.query.page || 1;
+  let totalItems;
+
+  Product.find().countDocuments().then(numProducts => {
+    totalItems = numProducts;
+    return Product.find()
+    .skip((page - 1) * ITEMS_PER_PAGE)
+    .limit(ITEMS_PER_PAGE)
+  })  
     .then((products) => {
       res.render("shop/product-list", {
         prods: products,
-        pageTitle: "Shop",
-        path: "/products",
-        isAuthenticated: req.session.isLoggedIn,
+        pageTitle: "Products",
+        path: "/",
+        totalItems: totalItems,
+        currentPage: page,
+        hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+        hasPreviousPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
+
       });
     })
     .catch((err) => {
@@ -44,16 +61,33 @@ exports.getProduct = (req, res, next) => {
 };
 
 exports.getIndex = (req, res, next) => {
-  Product.find()
+  const page = +req.query.page || 1;
+  let totalItems;
+
+  Product.find().countDocuments().then(numProducts => {
+    totalItems = numProducts;
+    return Product.find()
+    .skip((page - 1) * ITEMS_PER_PAGE)
+    .limit(ITEMS_PER_PAGE)
+  })  
     .then((products) => {
       res.render("shop/index", {
         prods: products,
         pageTitle: "Shop",
         path: "/",
+        totalItems: totalItems,
+        currentPage: page,
+        hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+        hasPreviousPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
+
       });
     })
     .catch((err) => {
       const error = new Error("Error retrieving data.");
+      console.log(err);
       error.httpStatusCode = 500;
       return next(error); //this will let express know that is has to use the error middleware
     });

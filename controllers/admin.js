@@ -4,6 +4,10 @@ const ObjectId = mongodb.ObjectId;
 const fileHelper = require('../util/file');
 const { validationResult } = require("express-validator");
 
+/*************
+* GET ROUTES *
+**************/
+
 // This will GET the product page
 exports.getAddProduct = (req, res, next) => {
   res.render('admin/edit-product', {
