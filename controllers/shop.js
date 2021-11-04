@@ -5,7 +5,7 @@ const path = require("path");
 
 const PDFDocument = require("pdfkit");
 
-const ITEMS_PER_PAGE = 1;
+const ITEMS_PER_PAGE = 6;
 
 // This GET returns the page with the products
 exports.getProducts = (req, res, next) => {
@@ -15,12 +15,14 @@ exports.getProducts = (req, res, next) => {
   const page = +req.query.page || 1;
   let totalItems;
 
-  Product.find().countDocuments().then(numProducts => {
-    totalItems = numProducts;
-    return Product.find()
-    .skip((page - 1) * ITEMS_PER_PAGE)
-    .limit(ITEMS_PER_PAGE)
-  })  
+  Product.find()
+    .countDocuments()
+    .then((numProducts) => {
+      totalItems = numProducts;
+      return Product.find()
+        .skip((page - 1) * ITEMS_PER_PAGE)
+        .limit(ITEMS_PER_PAGE);
+    })
     .then((products) => {
       res.render("shop/product-list", {
         prods: products,
@@ -33,7 +35,6 @@ exports.getProducts = (req, res, next) => {
         nextPage: page + 1,
         previousPage: page - 1,
         lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
-
       });
     })
     .catch((err) => {
@@ -64,12 +65,14 @@ exports.getIndex = (req, res, next) => {
   const page = +req.query.page || 1;
   let totalItems;
 
-  Product.find().countDocuments().then(numProducts => {
-    totalItems = numProducts;
-    return Product.find()
-    .skip((page - 1) * ITEMS_PER_PAGE)
-    .limit(ITEMS_PER_PAGE)
-  })  
+  Product.find()
+    .countDocuments()
+    .then((numProducts) => {
+      totalItems = numProducts;
+      return Product.find()
+        .skip((page - 1) * ITEMS_PER_PAGE)
+        .limit(ITEMS_PER_PAGE);
+    })
     .then((products) => {
       res.render("shop/index", {
         prods: products,
@@ -82,7 +85,6 @@ exports.getIndex = (req, res, next) => {
         nextPage: page + 1,
         previousPage: page - 1,
         lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
-
       });
     })
     .catch((err) => {
@@ -101,6 +103,23 @@ exports.getCart = (req, res, next) => {
       pageTitle: "Your Cart",
       products: products,
       isAuthenticated: req.session.isLoggedIn,
+    });
+  });
+};
+
+exports.getCheckout = (req, res, next) => {
+  req.user.populate("cart.items.productId").then((user) => {
+    const products = user.cart.items;
+    let total = 0;
+    products.forEach((p) => {
+      total += p.quantity * p.productId.price;
+    });
+    res.render("shop/checkout", {
+      path: "/checkout",
+      pageTitle: "Checkout",
+      products: products,
+      totalSum: total,
+      isAuthenticated: req.session.isLoggedIn
     });
   });
 };
@@ -175,14 +194,6 @@ exports.postOrder = (req, res, next) => {
       error.httpStatusCode = 500;
       return next(error); //this will let express know that is has to use the error middleware
     });
-};
-
-exports.getCheckout = (req, res, next) => {
-  res.render("shop/checkout", {
-    pageTitle: "Checkout",
-    path: "/checkout",
-    isAuthenticated: req.session.isLoggedIn,
-  });
 };
 
 exports.getInvoice = (req, res, next) => {

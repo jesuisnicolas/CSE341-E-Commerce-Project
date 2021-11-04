@@ -63,7 +63,7 @@ router.post(
   adminController.postEditProduct
 );
 
-router.post("/delete-product", isAuth,adminController.postDeleteProduct);
+router.delete("/product/:productId", isAuth, adminController.deleteProduct);
 
 
 // when I want to import this elements I have to look for them in adminData.routes,

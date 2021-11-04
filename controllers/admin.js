@@ -51,24 +51,42 @@ exports.getEditProduct = (req, res, next)=> {
   
 };
 // This GET returns the page with the ADMIN products.
+// exports.getAdminProducts = (req, res, next) => {
+//   Product.find({ userId: req.user._id })
+//     // .select("title price -_id") //this is a SELECT for the query
+//     // .populate("userId") //this will retrieve all the information (JOIN)
+//     .then(products => {
+//       res.render('admin/products', {
+//         prods: products, 
+//         pageTitle: 'Admin Products', 
+//         path: '/admin/products'
+//       }); 
+//     })
+//     .catch(err => {
+//       const error = new Error(err);
+//       error.httpStatusCode = 500;
+//       return next(error); //this will let express know that is has to use the error middleware
+//     });
+// }
+
 exports.getAdminProducts = (req, res, next) => {
   Product.find({ userId: req.user._id })
-    // .select("title price -_id") //this is a SELECT for the query
-    // .populate("userId") //this will retrieve all the information (JOIN)
+    // .select('title price -_id')
+    // .populate('userId', 'name')
     .then(products => {
-      res.render('admin/products', 
-      { prods: products, 
-        pageTitle: 'Admin Products', 
-        path: '/admin/products',
-        isAuthenticated: req.session.isLoggedIn 
-      }); 
+      console.log(products);
+      res.render('admin/products', {
+        prods: products,
+        pageTitle: 'Admin Products',
+        path: '/admin/products'
+      });
     })
     .catch(err => {
-      const error = new Error("Error retrieving the data.");
+      const error = new Error(err);
       error.httpStatusCode = 500;
-      return next(error); //this will let express know that is has to use the error middleware
+      return next(error);
     });
-}
+};
 
 
 /**************
@@ -202,8 +220,8 @@ exports.postEditProduct = (req, res, next) => {
     })
 };
 
-exports.postDeleteProduct = (req, res, next) => {
-  const prodId = req.body.productId;
+exports.deleteProduct = (req, res, next) => {
+  const prodId = req.params.productId;
   Product.findById(prodId)
     .then(product => {
       if(!product) {
@@ -214,12 +232,10 @@ exports.postDeleteProduct = (req, res, next) => {
     })
     .then(() => {
       console.log("Deleted product");
-      res.redirect("/admin/products");
+      res.status(200).json({ message: "Success!" });
     })
     .catch(err => {
-      const error = new Error(err);
-      error.httpStatusCode = 500;
-      return next(error); 
+      res.status(500).json({ message: "Deleting product failed." });
     });
 };
 
