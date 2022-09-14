@@ -1,7 +1,0 @@
-sessions
-connect-mongodb-session
-
-
-mongodb uri: "mongodb+srv://nicoscha:B9qFzXihHAoU6Rzz@cluster0.j1eeq.mongodb.net/shop"
-
-sendgrid apkey: "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"
